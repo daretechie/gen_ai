@@ -2,6 +2,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import torch
 
 
 st.set_page_config(page_title="Study Buddy", layout="wide")
@@ -19,12 +20,21 @@ os.environ["HF_HOME"] = cache_dir
 
 # Load model
 model_name = "microsoft/phi-2"
-model = AutoModelForCausalLM.from_pretrained(
-    model_name, 
-    cache_dir=cache_dir, 
-    torch_dtype="auto", 
-    trust_remote_code=True
-)
+# model = AutoModelForCausalLM.from_pretrained(
+#     model_name, 
+#     cache_dir=cache_dir, 
+#     torch_dtype="auto", 
+#     trust_remote_code=True
+# )
+
+with torch.no_grad():
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, 
+        cache_dir=cache_dir, 
+        torch_dtype="auto", 
+        trust_remote_code=True
+    )
+
 tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, trust_remote_code=True)
 
 st.title("Personalized Study Buddy")
