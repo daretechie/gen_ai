@@ -1,9 +1,10 @@
 import os
-import sys
+# import sys
 import streamlit as st
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Add the parent directory to the system path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from util.model_loader import load_model
 from dotenv import load_dotenv
@@ -15,7 +16,10 @@ st.title("Personalized Study Buddy")
 
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
-model, tokenizer = load_model(hf_token=HF_TOKEN)
+model = AutoModelForCausalLM.from_pretrained("microsoft/phi-2", torch_dtype="auto", trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
+
+# model, tokenizer = load_model(hf_token=HF_TOKEN)
 
 # Let user choose a study topic
 topics = ["Mathematics", "Physics", "Biology", "Artificial Intelligence", "History"]
