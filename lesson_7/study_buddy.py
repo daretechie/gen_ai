@@ -1,12 +1,17 @@
 import os
 import streamlit as st
-# import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
+st.set_page_config(page_title="Study Buddy", layout="wide")
+
+# Load environment variables
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
+
+if not HF_TOKEN:
+    st.error("Hugging Face API token is missing! Set it in GitHub Codespaces Secrets.")
 
 # Set Hugging Face cache directory
 cache_dir = "/tmp/huggingface"
@@ -22,17 +27,9 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, trust_remote_code=True)
 
-st.set_page_config(page_title="Study Buddy", layout="wide")
 st.title("Personalized Study Buddy")
 
-
-
-# Load model and tokenizer
-# model_name = "microsoft/phi-2"
-# model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto", trust_remote_code=True)
-# tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-
-# padding token issue
+# Padding token issue fix
 tokenizer.pad_token = tokenizer.eos_token  
 
 # Let user choose a study topic
@@ -51,7 +48,7 @@ if user_input:
 
     # Generate response
     with st.spinner("Thinking... "):
-        outputs = model.generate(**inputs, max_length=500, pad_token_id=tokenizer.pad_token_id)
+        outputs = model.generate(**inputs, max_length=600, pad_token_id=tokenizer.pad_token_id)
 
     # Decode response
     response = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
