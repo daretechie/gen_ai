@@ -1,25 +1,22 @@
 import os
-# import sys
 import streamlit as st
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
-# Add the parent directory to the system path
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# from util.model_loader import load_model
 from dotenv import load_dotenv
 
-
-# Set up the page
 st.set_page_config(page_title="Study Buddy", layout="wide")
 st.title("Personalized Study Buddy")
 
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
-model = AutoModelForCausalLM.from_pretrained("microsoft/phi-2", torch_dtype="auto", trust_remote_code=True)
-tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", trust_remote_code=True)
 
-# model, tokenizer = load_model(hf_token=HF_TOKEN)
+# Load model and tokenizer
+model_name = "microsoft/phi-2"
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto", trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+
+# Fix padding token issue
+tokenizer.pad_token = tokenizer.eos_token  
 
 # Let user choose a study topic
 topics = ["Mathematics", "Physics", "Biology", "Artificial Intelligence", "History"]
@@ -33,7 +30,7 @@ if user_input:
     prompt = f"You are an expert in {selected_topic}. Answer the following question in a clear and concise manner:\n\nQuestion: {user_input}\n\nAnswer:"
 
     # Tokenize input
-    inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, return_attention_mask=True)
+    inputs = tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
 
     # Generate response
     with st.spinner("Thinking... "):
