@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-import torch
+# import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
 
@@ -15,7 +15,7 @@ model_name = "microsoft/phi-2"
 model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto", trust_remote_code=True)
 tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
-# Fix padding token issue
+# padding token issue
 tokenizer.pad_token = tokenizer.eos_token  
 
 # Let user choose a study topic
