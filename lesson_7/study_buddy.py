@@ -4,16 +4,33 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
 
-st.set_page_config(page_title="Study Buddy", layout="wide")
-st.title("Personalized Study Buddy")
 
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-# Load model and tokenizer
+# Set Hugging Face cache directory
+cache_dir = "/tmp/huggingface"
+os.environ["HF_HOME"] = cache_dir
+
+# Load model
 model_name = "microsoft/phi-2"
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto", trust_remote_code=True)
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, 
+    cache_dir=cache_dir, 
+    torch_dtype="auto", 
+    trust_remote_code=True
+)
+tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, trust_remote_code=True)
+
+st.set_page_config(page_title="Study Buddy", layout="wide")
+st.title("Personalized Study Buddy")
+
+
+
+# Load model and tokenizer
+# model_name = "microsoft/phi-2"
+# model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype="auto", trust_remote_code=True)
+# tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
 # padding token issue
 tokenizer.pad_token = tokenizer.eos_token  
