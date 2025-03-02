@@ -6,7 +6,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 # Add the parent directory to the system path
 # sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from util.model_loader import load_model
+# from util.model_loader import load_model
 from dotenv import load_dotenv
 
 
