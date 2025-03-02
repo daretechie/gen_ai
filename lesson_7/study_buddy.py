@@ -3,9 +3,16 @@ import streamlit as st
 from dotenv import load_dotenv
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+import asyncio
 
 
 st.set_page_config(page_title="Study Buddy", layout="wide")
+
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
+    asyncio.run(asyncio.sleep(0))  # Ensure there's an event loop
+
 
 # Load environment variables
 load_dotenv()
@@ -19,7 +26,7 @@ cache_dir = "/tmp/huggingface"
 os.environ["HF_HOME"] = cache_dir
 
 # Load model
-model_name = "microsoft/phi-2"
+model_name = "microsoft/phi-1.5"
 model = AutoModelForCausalLM.from_pretrained(
     model_name, 
     cache_dir=cache_dir, 
@@ -52,7 +59,8 @@ if user_input:
 
     # Generate response
     with st.spinner("Thinking... "):
-        outputs = model.generate(**inputs, max_length=600, pad_token_id=tokenizer.pad_token_id)
+        # outputs = model.generate(**inputs, max_length=600, pad_token_id=tokenizer.pad_token_id)
+        outputs = model.generate(**inputs, max_length=300, pad_token_id=tokenizer.pad_token_id, temperature=0.7, top_p=0.9)
 
     # Decode response
     response = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
