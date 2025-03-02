@@ -20,20 +20,14 @@ os.environ["HF_HOME"] = cache_dir
 
 # Load model
 model_name = "microsoft/phi-2"
-# model = AutoModelForCausalLM.from_pretrained(
-#     model_name, 
-#     cache_dir=cache_dir, 
-#     torch_dtype="auto", 
-#     trust_remote_code=True
-# )
+model = AutoModelForCausalLM.from_pretrained(
+    model_name, 
+    cache_dir=cache_dir, 
+    torch_dtype="auto", 
+    trust_remote_code=True
+)
+model.eval()
 
-with torch.no_grad():
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name, 
-        cache_dir=cache_dir, 
-        torch_dtype="auto", 
-        trust_remote_code=True
-    )
 
 tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir, trust_remote_code=True)
 
